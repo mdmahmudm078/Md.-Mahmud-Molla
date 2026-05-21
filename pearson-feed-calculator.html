@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pearson Feed Calculator</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=zodiak@400,700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-border: #d4d1ca;
+      --color-text: #28251d; --color-text-muted: #6f6b63; --color-primary: #01696f; --color-primary-hover: #0c4e54;
+      --color-primary-highlight: #cedcd8; --color-error: #a12c7b; --radius-md: .5rem; --radius-lg: .75rem; --radius-xl: 1rem;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.06); --shadow-md: 0 8px 24px rgba(0,0,0,.08);
+      --font-display: 'Zodiak', Georgia, serif; --font-body: 'Satoshi', system-ui, sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-border: #393836;
+      --color-text: #cdccca; --color-text-muted: #96928c; --color-primary: #4f98a3; --color-primary-hover: #227f8b;
+      --color-primary-highlight: #313b3b; --shadow-sm: 0 1px 2px rgba(0,0,0,.2); --shadow-md: 0 12px 32px rgba(0,0,0,.35);
+    }
+    *,*::before,*::after{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;min-height:100dvh;font:var(--text-base)/1.6 var(--font-body);background:var(--color-bg);color:var(--color-text)}
+    h1,h2,h3{line-height:1.15;margin:0} p{margin:0;max-width:72ch} input,select,button{font:inherit;color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:var(--space-6)} .top{display:flex;justify-content:space-between;gap:var(--space-4);align-items:center;margin-bottom:var(--space-6)}
+    .brand{display:flex;gap:var(--space-3);align-items:center}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--color-primary),transparent),var(--color-primary-highlight);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+    .logo svg{width:24px;height:24px}.title h1{font-family:var(--font-display);font-size:var(--text-xl)} .title p{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .theme{min-width:44px;min-height:44px;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface);display:grid;place-items:center;cursor:pointer}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--space-6);margin-bottom:var(--space-6)}
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-5);box-shadow:var(--shadow-sm)}
+    .hero-copy{padding:var(--space-6);background:linear-gradient(160deg,var(--color-surface-2),var(--color-surface));border:1px solid var(--color-border);border-radius:calc(var(--radius-xl) + 4px);box-shadow:var(--shadow-md)}
+    .hero-copy h2{font-family:var(--font-display);font-size:clamp(2rem,1.6rem + 2vw,3.2rem);margin-bottom:var(--space-3)}
+    .hero-copy p{color:var(--color-text-muted)} .pillrow{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-4)}
+    .pill{padding:.45rem .8rem;border-radius:999px;background:var(--color-primary-highlight);color:var(--color-primary);font-size:var(--text-sm);font-weight:700}
+    .tabs{display:flex;gap:var(--space-2);margin-bottom:var(--space-4);flex-wrap:wrap}.tab{padding:.7rem 1rem;border-radius:999px;border:1px solid var(--color-border);background:transparent;cursor:pointer}.tab.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)} .field{display:grid;gap:var(--space-2)} label{font-size:var(--text-sm);font-weight:700}
+    select,input{width:100%;padding:.85rem 1rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2)}
+    .btnrow{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-5)} .btn{padding:.9rem 1.15rem;border-radius:999px;border:1px solid var(--color-border);cursor:pointer;min-height:44px}
+    .btn.primary{background:var(--color-primary);color:#fff;border-color:var(--color-primary)} .btn.primary:hover{background:var(--color-primary-hover)}
+    .btn.ghost{background:transparent} .note,.error{font-size:var(--text-sm);margin-top:var(--space-3)} .note{color:var(--color-text-muted)} .error{color:var(--color-error);font-weight:700}
+    .results{display:grid;gap:var(--space-4)} .resultbox{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4)}
+    .kpi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3)} .stat{padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
+    .stat strong{display:block;font-size:var(--text-sm);color:var(--color-text-muted)} .stat span{display:block;font-size:var(--text-lg);font-weight:700;margin-top:.2rem}
+    table{width:100%;border-collapse:collapse;margin-top:var(--space-3)} th,td{text-align:left;padding:.7rem;border-bottom:1px solid var(--color-border)} th{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .steps{display:grid;gap:var(--space-3)} .step{padding:var(--space-4);border-radius:var(--radius-lg);border:1px dashed var(--color-border);background:var(--color-surface-2)}
+    .hidden{display:none !important}
+    @media (max-width: 860px){.hero,.grid,.kpi{grid-template-columns:1fr}.wrap{padding:var(--space-4)}.hero-copy{padding:var(--space-5)}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M5 17c4.5 0 6.5-10 14-10" />
+            <path d="M5 12c3 0 4.5 7 14 7" />
+          </svg>
+        </div>
+        <div class="title">
+          <h1>Pearson Feed Calculator</h1>
+          <p>2-ingredient and 4-ingredient crude protein formulation</p>
+        </div>
+      </div>
+      <button class="theme" data-theme-toggle aria-label="Switch theme">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <h2>Build formulas with 2 or 4 ingredients.</h2>
+        <p>For 2 ingredients, the calculator applies the classic Pearson square. For 4 ingredients, it groups two high-protein items and two low-protein items, calculates each group average, then applies the Pearson square to the two groups before splitting within each group by your chosen ratio.</p>
+        <div class="pillrow">
+          <span class="pill">Target CP%</span>
+          <span class="pill">Grouped 4-item method</span>
+          <span class="pill">Instant check</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tabs" role="tablist" aria-label="Calculator mode">
+          <button class="tab active" data-mode-btn="2">2 Ingredients</button>
+          <button class="tab" data-mode-btn="4">4 Ingredients</button>
+        </div>
+
+        <form id="calcForm">
+          <div id="mode2" class="mode-panel">
+            <div class="grid">
+              <div class="field">
+                <label for="ingA">Ingredient A</label>
+                <select id="ingA"></select>
+              </div>
+              <div class="field">
+                <label for="cpA">CP % of Ingredient A</label>
+                <input id="cpA" type="number" step="0.01" min="0" max="100" />
+              </div>
+              <div class="field">
+                <label for="ingB">Ingredient B</label>
+                <select id="ingB"></select>
+              </div>
+              <div class="field">
+                <label for="cpB">CP % of Ingredient B</label>
+                <input id="cpB" type="number" step="0.01" min="0" max="100" />
+              </div>
+              <div class="field" style="grid-column:1/-1">
+                <label for="target2">Target CP %</label>
+                <input id="target2" type="number" step="0.01" min="0" max="100" />
+              </div>
+            </div>
+          </div>
+
+          <div id="mode4" class="mode-panel hidden">
+            <div class="grid">
+              <div class="field">
+                <label for="hp1">High-protein 1</label>
+                <select id="hp1"></select>
+              </div>
+              <div class="field">
+                <label for="cpHp1">CP %</label>
+                <input id="cpHp1" type="number" step="0.01" min="0" max="100" />
+              </div>
+              <div class="field">
+                <label for="hp2">High-protein 2</label>
+                <select id="hp2"></select>
+              </div>
+              <div class="field">
+                <label for="cpHp2">CP %</label>
+                <input id="cpHp2" type="number" step="0.01" min="0" max="100" />
+              </div>
+              <div class="field">
+                <label for="lp1">Low-protein 1</label>
+                <select id="lp1"></select>
+              </div>
+              <div class="field">
+                <label for="cpLp1">CP %</label>
+                <input id="cpLp1" type="number" step="0.01" min="0" max="100" />
+              </div>
+              <div class="field">
+                <label for="lp2">Low-protein 2</label>
+                <select id="lp2"></select>
+              </div>
+              <div class="field">
+                <label for="cpLp2">CP %</label>
+                <input id="cpLp2" type="number" step="0.01" min="0" max="100" />
+              </div>
+              <div class="field">
+                <label for="ratioHigh">Split ratio inside high-protein group</label>
+                <input id="ratioHigh" type="text" value="1:1" placeholder="e.g. 1:1 or 2:1" />
+              </div>
+              <div class="field">
+                <label for="ratioLow">Split ratio inside low-protein group</label>
+                <input id="ratioLow" type="text" value="1:1" placeholder="e.g. 1:1 or 3:2" />
+              </div>
+              <div class="field" style="grid-column:1/-1">
+                <label for="target4">Target CP %</label>
+                <input id="target4" type="number" step="0.01" min="0" max="100" />
+              </div>
+            </div>
+          </div>
+
+          <div class="btnrow">
+            <button type="submit" class="btn primary">Calculate</button>
+            <button type="button" class="btn ghost" id="fillDemo">Fill Demo Values</button>
+            <button type="reset" class="btn ghost">Reset</button>
+          </div>
+          <p class="note">4-ingredient mode follows the grouped/double Pearson-square approach: average the two high-protein ingredients, average the two low-protein ingredients, run Pearson square on those two group averages, then split each group by your selected internal ratio.</p>
+          <p id="errorBox" class="error hidden"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="results">
+      <div class="card">
+        <h3>Results</h3>
+        <div id="emptyHint" class="note">Enter values and press Calculate.</div>
+        <div id="resultsArea" class="hidden">
+          <div class="kpi">
+            <div class="stat"><strong>Mode</strong><span id="modeLabel">2 ingredients</span></div>
+            <div class="stat"><strong>Computed mix CP %</strong><span id="finalCp">0.00%</span></div>
+          </div>
+          <div class="resultbox">
+            <table>
+              <thead>
+                <tr><th>Ingredient</th><th>CP %</th><th>Inclusion %</th></tr>
+              </thead>
+              <tbody id="resultTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Method notes</h3>
+        <div id="stepsArea" class="steps">
+          <div class="step">Classic Pearson square is most effective for balancing a target nutrient with two ingredients by cross-subtracting diagonally and converting the resulting parts to percentages.</div>
+          <div class="step">For more than two ingredients, a common grouped method is to place high-protein ingredients in one group and low-protein ingredients in another, calculate the average CP of each group, apply Pearson square to the group averages, and then divide each group according to a chosen ratio.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const ingredients = [
+      'Fish meal','Corn gluten meal','Soybean meal','Corn gluten feed','Corn grain','Soybean hulls','Rice bran','Wheat bran','Meat and bone meal','Blood meal','Mustard oil cake','Sunflower meal',
+      'Poultry by-product meal','Feather meal','Meat meal','Hydrolyzed feather meal','Shrimp meal','Krill meal','Full-fat soybeans','Soy protein concentrate','Canola meal','Rapeseed meal','Groundnut cake','Groundnut meal','Cottonseed cake','Cottonseed meal','Sesame cake','Sesame meal','Linseed cake','Linseed meal','Palm kernel cake','Palm kernel meal','Broken corn','Wheat grain','Broken wheat','Barley grain','Sorghum grain','Millet grain','Oats','Wheat middlings','De-oiled rice bran','Rice polishings','Rice broken','Maize gluten meal 60','Distillers dried grains with solubles','DDGS (corn)','DDGS (rice)','Rice husk','Ground rice husk','Sugarcane bagasse','Beet pulp','Citrus pulp','Cassava chips','Cassava meal','Sweet potato meal','Potato meal','Fish oil','Soybean oil','Mustard oil','Sunflower oil','Palm oil','Rice bran oil','Tallow','Poultry fat','Alfalfa hay','Lucerne hay','Grass hay','Legume hay','Straw (rice straw)','Straw (wheat straw)','Corn silage','Sorghum silage','Dicalcium phosphate','Monocalcium phosphate','Limestone powder','Lime stone grit','Oyster shell powder','Salt (common salt)','Vitamin premix','Mineral premix','Vitamin-mineral premix','Trace mineral premix','DL-Methionine','L-Lysine','L-Threonine','L-Tryptophan','L-Valine','L-Isoleucine','Enzyme premix','Probiotic','Prebiotic','Yeast culture','Organic acid blend','Antioxidant','Mold inhibitor','Toxin binder','Flavoring agent','Coloring agent','Rice gluten meal','Guar meal','Pea protein concentrate','Faba bean meal','Field pea meal','Lupin meal','Coconut meal','Copra cake'
+    ];
+
+    const selectIds = ['ingA','ingB','hp1','hp2','lp1','lp2'];
+    selectIds.forEach(id => {
+      const el = document.getElementById(id);
+      el.innerHTML = ingredients.map(v => `<option value="${v}">${v}</option>`).join('');
+    });
+
+    const modeBtns = document.querySelectorAll('[data-mode-btn]');
+    let mode = '2';
+    modeBtns.forEach(btn => btn.addEventListener('click', () => {
+      mode = btn.dataset.modeBtn;
+      modeBtns.forEach(b => b.classList.toggle('active', b === btn));
+      document.getElementById('mode2').classList.toggle('hidden', mode !== '2');
+      document.getElementById('mode4').classList.toggle('hidden', mode !== '4');
+      hideError();
+    }));
+
+    document.querySelector('[data-theme-toggle]').addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+    });
+
+    function showError(msg){ const box=document.getElementById('errorBox'); box.textContent=msg; box.classList.remove('hidden'); }
+    function hideError(){ const box=document.getElementById('errorBox'); box.classList.add('hidden'); box.textContent=''; }
+    function num(v){ return parseFloat(v); }
+    function fmt(v){ return Number(v).toFixed(2) + '%'; }
+    function pearsonPercent(low, high, target){
+      if ([low,high,target].some(v => Number.isNaN(v))) throw new Error('Please enter all CP values.');
+      if (!(target > Math.min(low,high) && target < Math.max(low,high))) throw new Error('Target CP must be between the two source CP values or group averages.');
+      const lowPart = Math.abs(high - target);
+      const highPart = Math.abs(target - low);
+      const total = lowPart + highPart;
+      return { lowPct: lowPart / total * 100, highPct: highPart / total * 100, lowPart, highPart, total };
+    }
+    function parseRatio(text){
+      const parts = String(text).split(':').map(s => parseFloat(s.trim()));
+      if (parts.length !== 2 || parts.some(v => Number.isNaN(v) || v <= 0)) throw new Error('Ratio must look like 1:1, 2:1, or 3:2.');
+      const sum = parts[0] + parts[1];
+      return [parts[0]/sum, parts[1]/sum];
+    }
+
+    document.getElementById('fillDemo').addEventListener('click', () => {
+      if (mode === '2') {
+        ingA.value='Corn grain'; cpA.value=9; ingB.value='Soybean meal'; cpB.value=44; target2.value=25;
+      } else {
+        hp1.value='Fish meal'; cpHp1.value=60; hp2.value='Soybean meal'; cpHp2.value=44;
+        lp1.value='Corn grain'; cpLp1.value=9; lp2.value='Wheat bran'; cpLp2.value=16;
+        ratioHigh.value='1:1'; ratioLow.value='1:1'; target4.value=30;
+      }
+    });
+
+    document.getElementById('calcForm').addEventListener('submit', (e) => {
+      e.preventDefault(); hideError();
+      try {
+        const tbody = document.getElementById('resultTable');
+        const steps = document.getElementById('stepsArea');
+        tbody.innerHTML=''; steps.innerHTML='';
+        let rows = [], finalCp = 0;
+
+        if (mode === '2') {
+          const a = {name: ingA.value, cp: num(cpA.value)};
+          const b = {name: ingB.value, cp: num(cpB.value)};
+          const target = num(target2.value);
+          const low = a.cp <= b.cp ? a : b;
+          const high = a.cp > b.cp ? a : b;
+          const res = pearsonPercent(low.cp, high.cp, target);
+          rows = [
+            {name: low.name, cp: low.cp, inc: res.lowPct},
+            {name: high.name, cp: high.cp, inc: res.highPct}
+          ];
+          finalCp = rows.reduce((s,r) => s + r.cp * r.inc / 100, 0);
+          steps.innerHTML = `
+            <div class="step">Place the target CP in the center and the two ingredient CP values on the left of the Pearson square. Cross-subtract diagonally, ignore signs, and treat the results as parts.</div>
+            <div class="step">${high.name} part = |${target.toFixed(2)} - ${low.cp.toFixed(2)}| = ${res.highPart.toFixed(2)}; ${low.name} part = |${high.cp.toFixed(2)} - ${target.toFixed(2)}| = ${res.lowPart.toFixed(2)}.</div>
+            <div class="step">Total parts = ${res.total.toFixed(2)}. Inclusion becomes ${low.name} ${fmt(res.lowPct)} and ${high.name} ${fmt(res.highPct)}.</div>`;
+          document.getElementById('modeLabel').textContent = '2 ingredients';
+        } else {
+          const high1 = {name: hp1.value, cp: num(cpHp1.value)};
+          const high2 = {name: hp2.value, cp: num(cpHp2.value)};
+          const low1 = {name: lp1.value, cp: num(cpLp1.value)};
+          const low2 = {name: lp2.value, cp: num(cpLp2.value)};
+          const target = num(target4.value);
+          const highAvg = (high1.cp + high2.cp) / 2;
+          const lowAvg = (low1.cp + low2.cp) / 2;
+          const [hr1, hr2] = parseRatio(ratioHigh.value);
+          const [lr1, lr2] = parseRatio(ratioLow.value);
+          if (!(high1.cp > target || high2.cp > target || highAvg > target)) throw new Error('High-protein group should average above the target CP.');
+          if (!(low1.cp < target || low2.cp < target || lowAvg < target)) throw new Error('Low-protein group should average below the target CP.');
+          const res = pearsonPercent(lowAvg, highAvg, target);
+          const highGroupPct = res.highPct;
+          const lowGroupPct = res.lowPct;
+          rows = [
+            {name: high1.name, cp: high1.cp, inc: highGroupPct * hr1},
+            {name: high2.name, cp: high2.cp, inc: highGroupPct * hr2},
+            {name: low1.name, cp: low1.cp, inc: lowGroupPct * lr1},
+            {name: low2.name, cp: low2.cp, inc: lowGroupPct * lr2}
+          ];
+          finalCp = rows.reduce((s,r) => s + r.cp * r.inc / 100, 0);
+          steps.innerHTML = `
+            <div class="step">First calculate group averages. High-protein average = (${high1.cp.toFixed(2)} + ${high2.cp.toFixed(2)}) / 2 = ${highAvg.toFixed(2)}. Low-protein average = (${low1.cp.toFixed(2)} + ${low2.cp.toFixed(2)}) / 2 = ${lowAvg.toFixed(2)}.</div>
+            <div class="step">Apply the Pearson square to the two group averages. High-group part = |${target.toFixed(2)} - ${lowAvg.toFixed(2)}| = ${res.highPart.toFixed(2)}. Low-group part = |${highAvg.toFixed(2)} - ${target.toFixed(2)}| = ${res.lowPart.toFixed(2)}.</div>
+            <div class="step">Convert group parts to percentages: high group ${fmt(highGroupPct)}, low group ${fmt(lowGroupPct)}. Then split the high group by ${ratioHigh.value} and the low group by ${ratioLow.value}.</div>`;
+          document.getElementById('modeLabel').textContent = '4 ingredients';
+        }
+
+        rows.forEach(r => {
+          tbody.insertAdjacentHTML('beforeend', `<tr><td>${r.name}</td><td>${fmt(r.cp)}</td><td>${fmt(r.inc)}</td></tr>`);
+        });
+        document.getElementById('finalCp').textContent = fmt(finalCp);
+        document.getElementById('emptyHint').classList.add('hidden');
+        document.getElementById('resultsArea').classList.remove('hidden');
+      } catch (err) {
+        showError(err.message);
+      }
+    });
+
+    document.getElementById('calcForm').addEventListener('reset', () => {
+      setTimeout(() => {
+        hideError();
+        document.getElementById('resultsArea').classList.add('hidden');
+        document.getElementById('emptyHint').classList.remove('hidden');
+        document.getElementById('resultTable').innerHTML='';
+      }, 0);
+    });
+  </script>
+</body>
+</html>
